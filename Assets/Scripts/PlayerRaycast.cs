@@ -79,6 +79,7 @@
 
 using Unity.Burst.CompilerServices;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerRaycast : MonoBehaviour
 {
@@ -87,6 +88,9 @@ public class PlayerRaycast : MonoBehaviour
     private LineRenderer lineRenderer;
     [SerializeField]
     private LayerMask layerMask;
+
+    public float speedMove;
+    public float speedRotate;
 
     void Start()
     {
@@ -109,6 +113,26 @@ public class PlayerRaycast : MonoBehaviour
         float r = DetectAndDrawRay(transform.right, 3);  // Right
         Debug.Log($"Forward   distance {f}\nBackward  distance {b}\nLeft      distance {l}\nRight     distance {r}");
 
+        float move = calcMove(f, b);
+        float rotate = calcRotate( l, r);
+        
+        control(move, rotate);
+    }
+
+    void control(float movex, float rotate)
+    {
+        transform.Translate(Vector2.down * (movex + 1) / 2 * speedMove * Time.deltaTime);
+        transform.Rotate(0f, 0f, rotate * speedRotate, Space.Self);
+    }
+
+    float calcMove(float f, float b)
+    {
+        return 1;
+    }
+
+    float calcRotate(float f, float b)
+    {
+        return 1;
     }
 
     float DetectAndDrawRay(Vector2 direction, int index)

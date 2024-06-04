@@ -70,11 +70,11 @@ public class AIController : Agent
         //Use controller to move
     }
 
-    public override void CollectObservations(VectorSensor sensor)
-    {
-        sensor.AddObservation(transform.position);   
-        sensor.AddObservation(trackCheckpoints.GetNextCheckpoint(transform).transform.position);
-    }
+    //public override void CollectObservations(VectorSensor sensor)
+    //{
+    //    sensor.AddObservation(transform.position);   
+    //    sensor.AddObservation(trackCheckpoints.GetNextCheckpoint(transform).transform.position);
+    //}
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {

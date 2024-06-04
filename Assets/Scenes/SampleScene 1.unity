@@ -298,7 +298,6 @@ GameObject:
   m_Component:
   - component: {fileID: 323475121}
   - component: {fileID: 323475120}
-  - component: {fileID: 323475133}
   - component: {fileID: 323475132}
   - component: {fileID: 323475125}
   - component: {fileID: 323475131}
@@ -369,13 +368,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 323475118}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 110, y: 573, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: -0.9977666, w: 0.06679645}
+  m_LocalPosition: {x: 102, y: 598, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 165892409}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -172.34}
 --- !u!61 &323475125
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -464,24 +463,8 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 64
---- !u!114 &323475133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 323475118}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 424c6f6f8996e604190c28c0223c10c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  pGain: 1
-  iGain: 0
-  dGain: 0
-  fixedDeltaTime: 1
-  maxDistanceFromWall: 3
+  speedMove: 0
+  speedRotate: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
