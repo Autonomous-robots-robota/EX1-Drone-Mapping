@@ -77,14 +77,16 @@
 //    }
 //}
 
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 public class PlayerRaycast : MonoBehaviour
 {
     [SerializeField]
     private float detectionDistance = 5f; // Distance to detect walls
-
     private LineRenderer lineRenderer;
+    [SerializeField]
+    private LayerMask layerMask;
 
     void Start()
     {
@@ -101,36 +103,24 @@ public class PlayerRaycast : MonoBehaviour
     void Update()
     {
         // Detect walls in four directions relative to the player's orientation
-        DetectAndDrawRay(transform.up, 0);    // Forward
-        DetectAndDrawRay(-transform.up, 1);   // Backward
-        DetectAndDrawRay(-transform.right, 2); // Left
-        DetectAndDrawRay(transform.right, 3);  // Right
+        float f = DetectAndDrawRay(transform.up, 0);    // Forward
+        float b = DetectAndDrawRay(-transform.up, 1);   // Backward
+        float l = DetectAndDrawRay(-transform.right, 2); // Left
+        float r = DetectAndDrawRay(transform.right, 3);  // Right
+        Debug.Log($"Forward   distance {f}\nBackward  distance {b}\nLeft      distance {l}\nRight     distance {r}");
+
     }
 
-    void DetectAndDrawRay(Vector2 direction, int index)
+    float DetectAndDrawRay(Vector2 direction, int index)
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, detectionDistance);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, detectionDistance, layerMask);
         float distance = hit.collider != null ? hit.distance : detectionDistance;
 
         // Set the positions for the LineRenderer
         lineRenderer.SetPosition(index * 2, transform.position);
         lineRenderer.SetPosition(index * 2 + 1, transform.position + (Vector3)direction * distance);
 
-        // If the ray hits a collider, print the direction and distance to the wall
-        if (hit.collider != null)
-        {
-            Debug.Log($"Detected wall in direction {direction} at distance {hit.distance}");
-        }
-    }
-
-    // Optionally, draw the rays in the Scene view for debugging
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, transform.up * detectionDistance);    // Forward
-        Gizmos.DrawRay(transform.position, -transform.up * detectionDistance);   // Backward
-        Gizmos.DrawRay(transform.position, -transform.right * detectionDistance); // Left
-        Gizmos.DrawRay(transform.position, transform.right * detectionDistance);  // Right
+        return distance;
     }
 }
 
