@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -44,6 +45,7 @@ public class TrackCheckpoints : MonoBehaviour
             //Debug.Log("Correct");
             OnCorrectCheckpoint?.Invoke(this, new CheckpointEventArgs { droneTransform = droneTransform });
             nextCheckpointSingleIndexList[droneTransformList.IndexOf(droneTransform)] = (nextCheckpointSingleIndex + 1) % checkpointList.Count;
+            Debug.Log(toString(nextCheckpointSingleIndexList));
         }
         else
         {
@@ -69,5 +71,16 @@ public class TrackCheckpoints : MonoBehaviour
     public CheckpointSingle GetNextCheckpoint(Transform droneTransform)
     {
         return checkpointList[nextCheckpointSingleIndexList[droneTransformList.IndexOf(droneTransform)]];
+    }
+
+    private String toString(List<int> list)
+    {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.Count; i++)
+        {
+            sb.Append(list[i]);
+            sb.Append(" ");
+        }
+        return sb.ToString();
     }
 }

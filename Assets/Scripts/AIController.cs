@@ -5,6 +5,10 @@ using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 
+
+//conda activate mlagents
+//mlagents-learn --run-id test6 --force
+
 public class AIController : Agent
 {
     public float speedMove;
@@ -35,9 +39,9 @@ public class AIController : Agent
     {
         if (e.droneTransform == transform)
         {
-            AddReward(-1f);
+            AddReward(-3f);
             //EndEpisode();
-            Debug.Log("Add Punishment -1f");
+            Debug.Log("Add Punishment -3f");
         }
     }
 
@@ -66,11 +70,11 @@ public class AIController : Agent
         //Use controller to move
     }
 
-    //public override void CollectObservations(VectorSensor sensor)
-    //{
-    //    sensor.AddObservation(this);   
-
-    //}
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        sensor.AddObservation(transform.position);   
+        sensor.AddObservation(trackCheckpoints.GetNextCheckpoint(transform).transform.position);
+    }
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
@@ -84,7 +88,7 @@ public class AIController : Agent
         if(collision.gameObject.tag == "wall")
         {
             Debug.Log("collided with Wall");
-            AddReward(-20f);
+            AddReward(-10f);
             EndEpisode();
         }
         //if (collision.gameObject.tag == "cp")
