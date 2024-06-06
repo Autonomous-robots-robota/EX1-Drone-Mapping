@@ -612,10 +612,10 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 6d543fdb2af7ea64a8f8d308ff8d20c4, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
-  m_BehaviorName: Drone Control
+  m_BehaviorType: 1
+  m_BehaviorName: DroneControl
   TeamId: 0
   m_UseChildSensors: 0
   m_UseChildActuators: 1
@@ -663,6 +663,15 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 64
+  speedMove: 0
+  speedRotate: 0
+  moveKp: 1
+  moveKi: 0.1
+  moveKd: 0.01
+  rotateKp: 1
+  rotateKi: 0.1
+  rotateKd: 0.01
+  desiredDistance: 1
 --- !u!1 &335490070 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6185023429409326376, guid: 1f67d00fc4a2ac143840f0bcaa998a81, type: 3}
@@ -846,7 +855,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &661109617
 Transform:
   m_ObjectHideFlags: 0
@@ -969,10 +978,10 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 6d543fdb2af7ea64a8f8d308ff8d20c4, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
-  m_BehaviorName: Drone Control
+  m_BehaviorType: 1
+  m_BehaviorName: DroneControl
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -1090,6 +1099,15 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 64
+  speedMove: 0
+  speedRotate: 0
+  moveKp: 1
+  moveKi: 0.1
+  moveKd: 0.01
+  rotateKp: 1
+  rotateKi: 0.1
+  rotateKd: 0.01
+  desiredDistance: 1
 --- !u!1 &666711687 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7743324883176348182, guid: 1f67d00fc4a2ac143840f0bcaa998a81, type: 3}
@@ -1130,7 +1148,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &728724056
 Transform:
   m_ObjectHideFlags: 0
@@ -1253,10 +1271,10 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 6d543fdb2af7ea64a8f8d308ff8d20c4, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
-  m_BehaviorName: Drone Control
+  m_BehaviorType: 1
+  m_BehaviorName: DroneControl
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -1374,6 +1392,15 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 64
+  speedMove: 0
+  speedRotate: 0
+  moveKp: 1
+  moveKi: 0.1
+  moveKd: 0.01
+  rotateKp: 1
+  rotateKi: 0.1
+  rotateKd: 0.01
+  desiredDistance: 1
 --- !u!1 &753420553
 GameObject:
   m_ObjectHideFlags: 0
@@ -1785,7 +1812,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &889308046
 Transform:
   m_ObjectHideFlags: 0
@@ -1908,10 +1935,10 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 6d543fdb2af7ea64a8f8d308ff8d20c4, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
-  m_BehaviorName: Drone Control
+  m_BehaviorType: 1
+  m_BehaviorName: DroneControl
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -2029,6 +2056,15 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 64
+  speedMove: 0
+  speedRotate: 0
+  moveKp: 1
+  moveKi: 0.1
+  moveKd: 0.01
+  rotateKp: 1
+  rotateKi: 0.1
+  rotateKd: 0.01
+  desiredDistance: 1
 --- !u!1 &922681226 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3522413142295089393, guid: 1f67d00fc4a2ac143840f0bcaa998a81, type: 3}
@@ -3265,7 +3301,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1738721500
 Transform:
   m_ObjectHideFlags: 0
@@ -3388,10 +3424,10 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 6d543fdb2af7ea64a8f8d308ff8d20c4, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
-  m_BehaviorName: Drone Control
+  m_BehaviorType: 1
+  m_BehaviorName: DroneControl
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -3509,6 +3545,15 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 64
+  speedMove: 0
+  speedRotate: 0
+  moveKp: 1
+  moveKi: 0.1
+  moveKd: 0.01
+  rotateKp: 1
+  rotateKi: 0.1
+  rotateKd: 0.01
+  desiredDistance: 1
 --- !u!1 &1789893423 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8465695736393003943, guid: 1f67d00fc4a2ac143840f0bcaa998a81, type: 3}
@@ -3566,7 +3611,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1922984416
 Transform:
   m_ObjectHideFlags: 0
@@ -3689,10 +3734,10 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 6d543fdb2af7ea64a8f8d308ff8d20c4, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
-  m_BehaviorName: Drone Control
+  m_BehaviorType: 1
+  m_BehaviorName: DroneControl
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -3810,6 +3855,15 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 64
+  speedMove: 0
+  speedRotate: 0
+  moveKp: 1
+  moveKi: 0.1
+  moveKd: 0.01
+  rotateKp: 1
+  rotateKi: 0.1
+  rotateKd: 0.01
+  desiredDistance: 1
 --- !u!1 &1974123808
 GameObject:
   m_ObjectHideFlags: 0

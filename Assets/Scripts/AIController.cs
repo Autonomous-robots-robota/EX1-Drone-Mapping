@@ -7,7 +7,7 @@ using Unity.MLAgents.Sensors;
 
 
 //conda activate mlagents
-//mlagents-learn --run-id test6 --force
+//mlagents-learn config/config.yaml --run-id test1 --force
 
 public class AIController : Agent
 {
@@ -15,13 +15,13 @@ public class AIController : Agent
     public float speedRotate;
     //public GameObject cps;
 
-    //private Rigidbody2D rb;
+    private Rigidbody2D rb;
 
     [SerializeField] private TrackCheckpoints trackCheckpoints;
 
     public override void Initialize()
     {
-        //rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         trackCheckpoints.OnCorrectCheckpoint += TrackCheckpoints_OnCorrectCheckpoint;
         trackCheckpoints.OnIncorrectCheckpoint += TrackCheckpoints_OnIncorrectCheckpoint;
     }
@@ -57,12 +57,13 @@ public class AIController : Agent
     {
         //Debug.Log(actions.DiscreteActions[0]);
         float movex = actions.ContinuousActions[0];
-        //float movey = actions.ContinuousActions[1];
+        float movey = actions.ContinuousActions[1];
         float rotate = actions.ContinuousActions[2];
 
         //transform.localPosition += new Vector3(movex, movey, 0).normalized * Time.deltaTime * speedMove;
+        rb.AddForce(new Vector2(movex,movey) * speedMove * Time.deltaTime);
         //rb.MovePosition(transform.position + transform.forward * movex * speedMove * Time.deltaTime);
-        transform.Translate(Vector2.down * (movex + 1) / 2 * speedMove * Time.deltaTime);
+        //transform.Translate(Vector2.down * (movex + 1) / 2 * speedMove * Time.deltaTime);
         //transform.position += new Vector3((movex+1)/2, 0, 0).normalized * Time.deltaTime * speedMove;
         transform.Rotate(0f, 0f, rotate * speedRotate, Space.Self);
         //transform.Rotate(Vector3.forward, rotate * speedRotate * Time.deltaTime);

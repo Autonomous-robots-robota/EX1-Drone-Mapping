@@ -1,96 +1,34 @@
-//using UnityEngine;
-
-//public class PlayerRaycast : MonoBehaviour
-//{
-//    [SerializeField]
-//    private float detectionDistance = 5f; // Distance to detect walls
-
-//    private float drawDistanceL = 5f; 
-//    private float drawDistanceR = 5f; 
-//    private float drawDistanceU = 5f; 
-//    private float drawDistanceD = 5f;
-
-//    void Update()
-//    {
-//        //drawDistanceL = detectionDistance;
-//        //drawDistanceR = detectionDistance;
-//        //drawDistanceU = detectionDistance;
-//        //drawDistanceD = detectionDistance;
-//    // Detect walls in four directions
-//        DetectWalls(transform.up);    // Forward
-//        DetectWalls(-transform.up);   // Backward
-//        DetectWalls(-transform.right); // Left
-//        DetectWalls(transform.right);  // Right
-//    }
-
-//    void DetectWalls(Vector2 direction)
-//    {
-//        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, detectionDistance);
-
-//        if (hit.collider != null)
-//        {
-//            if(direction == Vector2.down) {
-//                drawDistanceD = hit.distance;
-//            }
-//            else
-//            {
-//                drawDistanceD = detectionDistance;
-//            }
-//            if (direction == Vector2.up)
-//            {
-//                drawDistanceU = hit.distance;
-//            }
-//            else
-//            {
-//                drawDistanceU = detectionDistance;
-//            }
-//            if (direction == Vector2.right)
-//            {
-//                drawDistanceR = hit.distance;
-//            }
-//            else
-//            {
-//                drawDistanceR = detectionDistance;
-//            }
-//            if (direction == Vector2.left)
-//            {
-//                drawDistanceL = hit.distance;
-//            }
-//            else
-//            {
-//                drawDistanceL = detectionDistance;
-//            }
-
-//            // If the ray hits a collider, print the direction and distance to the wall
-//            Debug.Log($"Detected wall in direction {direction} at distance {hit.distance}");
-//        }
-//    }
-
-//    // Optionally, draw the rays in the Scene view for debugging
-//    void OnDrawGizmos()
-//    {
-//        Gizmos.color = Color.red;
-//        Gizmos.DrawRay(transform.position, transform.up * drawDistanceU);    // Forward
-//        Gizmos.DrawRay(transform.position, -transform.up * drawDistanceD);   // Backward
-//        Gizmos.DrawRay(transform.position, -transform.right * drawDistanceL); // Left
-//        Gizmos.DrawRay(transform.position, transform.right * drawDistanceR);  // Right
-//    }
-//}
-
-using Unity.Burst.CompilerServices;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class PlayerRaycast : MonoBehaviour
 {
     [SerializeField]
-    private float detectionDistance = 5f; // Distance to detect walls
+    private float detectionDistance = 3f; // Distance to detect walls
     private LineRenderer lineRenderer;
     [SerializeField]
     private LayerMask layerMask;
 
     public float speedMove;
     public float speedRotate;
+
+    // PID parameters for movement
+    public float moveKp = 1f;
+    public float moveKi = 0.1f;
+    public float moveKd = 0.01f;
+
+    // PID parameters for rotation
+    public float rotateKp = 1f;
+    public float rotateKi = 0.1f;
+    public float rotateKd = 0.01f;
+
+    private float moveIntegral = 0f;
+    private float movePreviousError = 0f;
+
+    private float rotateIntegral = 0f;
+    private float rotatePreviousError = 0f;
+
+    // Threshold distances
+    public float desiredDistance = 1f; // Desired distance from the walls
 
     void Start()
     {
@@ -113,26 +51,65 @@ public class PlayerRaycast : MonoBehaviour
         float r = DetectAndDrawRay(transform.right, 3);  // Right
         Debug.Log($"Forward   distance {f}\nBackward  distance {b}\nLeft      distance {l}\nRight     distance {r}");
 
-        float move = calcMove(f, b);
-        float rotate = calcRotate( l, r);
-        
+        (float move, float rotate) = CalculateMovementAndRotation(f, b, l, r);
+
         control(move, rotate);
     }
 
     void control(float movex, float rotate)
     {
-        transform.Translate(Vector2.down * (movex + 1) / 2 * speedMove * Time.deltaTime);
-        transform.Rotate(0f, 0f, rotate * speedRotate, Space.Self);
+        transform.Translate(Vector2.up * movex * speedMove * Time.deltaTime);
+        transform.Rotate(0f, 0f, rotate * speedRotate * Time.deltaTime, Space.Self);
     }
 
-    float calcMove(float f, float b)
+    (float, float) CalculateMovementAndRotation(float f, float b, float l, float r)
     {
-        return 1;
+        float moveSpeed = 1f;
+        float rotateSpeed = 0f;
+
+        //if (f < detectionDistance)
+        //{
+        //    // Slow down as it gets closer to an obstacle in front and turn right
+        //    moveSpeed = Mathf.Clamp(f / detectionDistance, 0.1f, 1f); // Slows down linearly as it approaches the obstacle
+        //    rotateSpeed = 1f; // Turn right
+        //}
+        //else if (r < detectionDistance && l < detectionDistance)
+        if (r < detectionDistance && l < detectionDistance)
+        {
+            // Stay in the middle
+            moveSpeed = 1f;
+            rotateSpeed = CalcRotate(l, r);
+        }
+        else
+        {
+            // Stay at the desired distance away from the right wall
+            moveSpeed = 1f;
+            rotateSpeed = CalcRotateToMaintainDistance(r);
+        }
+
+        return (moveSpeed, rotateSpeed);
     }
 
-    float calcRotate(float f, float b)
+    float CalcRotate(float l, float r)
     {
-        return 1;
+        float error = l - r;
+        rotateIntegral += error * Time.deltaTime;
+        float derivative = (error - rotatePreviousError) / Time.deltaTime;
+        rotatePreviousError = error;
+
+        float output = rotateKp * error + rotateKi * rotateIntegral + rotateKd * derivative;
+        return Mathf.Clamp(output, -1f, 1f); // Clamp to [-1, 1] to keep rotation within bounds
+    }
+
+    float CalcRotateToMaintainDistance(float r)
+    {
+        float error = desiredDistance - r; // Error is the difference between desired distance and the right distance
+        rotateIntegral += error * Time.deltaTime;
+        float derivative = (error - rotatePreviousError) / Time.deltaTime;
+        rotatePreviousError = error;
+
+        float output = rotateKp * error + rotateKi * rotateIntegral + rotateKd * derivative;
+        return Mathf.Clamp(output, -1f, 1f); // Clamp to [-1, 1] to keep rotation within bounds
     }
 
     float DetectAndDrawRay(Vector2 direction, int index)
@@ -147,5 +124,3 @@ public class PlayerRaycast : MonoBehaviour
         return distance;
     }
 }
-
-
