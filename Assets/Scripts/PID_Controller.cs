@@ -73,7 +73,8 @@ public class PIDController {
         return (a - b + 540) % 360 - 180;   //calculate modular difference, and remap to [-180, 180]
     }
 
-    public float UpdateAngle(float dt, float currentAngle, float targetAngle) {
+    public float UpdateAngle(float tps, float currentAngle, float targetAngle) {
+        float dt = 1.0f / tps;
         if (dt <= 0) throw new ArgumentOutOfRangeException(nameof(dt));
         float error = AngleDifference(targetAngle, currentAngle);
 
