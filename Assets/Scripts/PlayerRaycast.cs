@@ -3,133 +3,129 @@ using UnityEngine;
 
 public class PlayerRaycast : MonoBehaviour
 {
-    [SerializeField]
-    private float detectionDistance = 70f; // Distance to detect walls
-    [SerializeField]
-    private float emergencyDistance = 5f; // Distance to detect walls
-    [SerializeField]
-    private float rollLeftDistance = 60f;
-    //[SerializeField]
-    //private float stayMiddle = 15f; // Distance to detect walls
-    [SerializeField]
-    private float rightDistance = 20f; // Distance to detect walls
+    [Header("Distances")]
+    [SerializeField] private float detectionDistance = 120f;
+    [SerializeField] private float emergencyDistance = 20f;
+    [SerializeField] private float frontDistance = 25f;
+    [SerializeField] private float sideDistance = 30f;
+    [SerializeField] private float tunnelDistance = 20f;
+
+    [Header("Speed Settings")]
+    [SerializeField] private float speedMove;
+    [SerializeField] private float speedRotate;
+
+    [Header("Controller Settings")]
+    [SerializeField] private PIDController rotateController;
+    [SerializeField] private LayerMask layerMask;
+    [SerializeField] private int fps = 60;
+    [SerializeField] private int sensPS = 20;
+
+    [Header("Acceleration Settings")]
+    [SerializeField] private float maxAcceleration = 40f;
+
     private LineRenderer lineRenderer;
-    [SerializeField]
-    private LayerMask layerMask;
-    [SerializeField] 
-    PIDController rotateController;
-
-    [SerializeField] private int tps;
-
-    public float speedMove;
-    public float speedRotate;
-
+    [SerializeField] private float f, b, r, l;
+    [SerializeField] private bool isR;
+    [SerializeField] private bool isInTunnel;
+    private Vector2 currentVelocity = Vector2.zero;
 
     void Start()
     {
-        // Initialize the LineRenderer
-        lineRenderer = gameObject.AddComponent<LineRenderer>();
-        lineRenderer.startWidth = 1f;
-        lineRenderer.endWidth = 1f;
-        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        lineRenderer.startColor = Color.green;
-        lineRenderer.endColor = Color.green;
-        lineRenderer.positionCount = 8; // We will draw 4 lines (2 points per line)
-
+        lineRenderer = GetComponent<LineRenderer>();
         StartCoroutine(CallFunctionRepeatedly());
     }
 
     IEnumerator CallFunctionRepeatedly()
     {
+        int i = 0;
         while (true)
         {
-            yield return new WaitForSeconds(1.0f / tps); // Adjust to call the function 20 times per second
-            UpdateParams();
+            yield return new WaitForSeconds(1.0f / fps);
+            //DrawLines();
+            ControlMovement();
+            i++;
+            if (i % (fps / sensPS) == 0) { 
+                UpdateSensors();
+                DrawLines();
+            }
+            if(i % (10f * fps) == 0 && isInTunnel) { 
+                isR = !isR;
+            }
         }
     }
 
-    void UpdateParams()
+    private void ControlMovement()
     {
-        // Detect walls in four directions relative to the player's orientation
-        float f = DetectAndDrawRay(transform.up, 0);    // Forward
-        float b = DetectAndDrawRay(-transform.up, 1);   // Backward
-        float l = DetectAndDrawRay(-transform.right, 2); // Left
-        float r = DetectAndDrawRay(transform.right, 3);  // Right
-        Debug.Log($"Forward   distance {f}\nBackward  distance {b}\nLeft      distance {l}\nRight     distance {r}");
+        float moveX = CalcForward(f);
+        float rotate = CalcRotation(f, r, l);
 
-        ControlRight(f, b, l, r);
-    }
+        Vector2 desiredVelocity = Vector2.up * moveX * speedMove;
+        Vector2 acceleration = (desiredVelocity - currentVelocity) / Time.deltaTime;
 
-    void Update()
-    {
-        //// Detect walls in four directions relative to the player's orientation
-        //float f = DetectAndDrawRay(transform.up, 0);    // Forward
-        //float b = DetectAndDrawRay(-transform.up, 1);   // Backward
-        //float l = DetectAndDrawRay(-transform.right, 2); // Left
-        //float r = DetectAndDrawRay(transform.right, 3);  // Right
-        //Debug.Log($"Forward   distance {f}\nBackward  distance {b}\nLeft      distance {l}\nRight     distance {r}");
+        if (acceleration.magnitude > maxAcceleration)
+        {
+            acceleration = acceleration.normalized * maxAcceleration;
+        }
 
-        //ControlRight(f, b, l, r);
+        currentVelocity += acceleration * Time.deltaTime;
 
-    }
-
-    void ControlRight(float f, float b, float l, float r)
-    {
-        float moveX, moveY, rotate;
-        rotate = CalcRotation(f,r, l);
-        moveX = CalcForward(f);
-        //moveY = CalcRoll(r);
+        //transform.Translate(currentVelocity * Time.deltaTime);
 
         transform.Translate(Vector2.up * moveX * speedMove * Time.deltaTime);
-        //transform.Translate(Vector2.right * moveY * speedMove * Time.deltaTime);
         transform.Rotate(0f, 0f, rotate * speedRotate * Time.deltaTime, Space.Self);
     }
 
-    float CalcRotation(float f, float r, float l)
+    private void DrawLines()
     {
-    //    if (r < emergencyDistance)
-    //    { // r is too close to the wall and l has plenty of room
-    //        return rotateController.UpdateAngle(tps, r, rightDistance);
-    //    }
-        if (f < rollLeftDistance)
-        { // close to the wall in front, need to turn left
-            return 1;
-            return rotateController.UpdateAngle(tps, f, rollLeftDistance);
+        Vector3[] positions = new Vector3[]
+        {
+            transform.position + transform.up * f,
+            transform.position - transform.up * b,
+            transform.position, 
+            transform.position - transform.right * l,
+            transform.position + transform.right * r
+        };
+        for (int i = 0; i < positions.Length; i++)
+        {
+            lineRenderer.SetPosition(i, positions[i]);
         }
-        else if(r < rightDistance && l < rightDistance)
-        { // r and l are close to the wall, stay in the middle
-            float closer = Mathf.Min(r, l);
-            //return rotateController.UpdateAngle(1.0f / tps, closer, stayMiddle * Mathf.Sign(r-l));
-            return rotateController.UpdateAngle(tps, r, (r+l)/2);
-        }
-        //else if (r > rightDistance)
-        //{ // far from the right wall, turn towards it
-            return rotateController.UpdateAngle(tps, r, rightDistance);
-        //}
-        //return 0f;
     }
 
-    float CalcForward(float f) {
-        if (f < emergencyDistance) return 0f; // EMERGENCY
-        if (f > detectionDistance) return 1f;
-        return Mathf.Clamp(f - emergencyDistance / detectionDistance - emergencyDistance, 0f, 1f);
-    }
-
-    float CalcRoll(float r)
+    private void UpdateSensors()
     {
-        return Mathf.Clamp(r-25, -1f, 1f);
+        f = GetSensorData(transform.up);
+        b = GetSensorData(-transform.up);
+        l = GetSensorData(-transform.right);
+        r = GetSensorData(transform.right);
 
+        if (r < tunnelDistance && l < tunnelDistance)
+        {
+            isInTunnel = true;
+        }
+        else if ((r == detectionDistance || l == detectionDistance) && isInTunnel)
+        {
+            isR = !isR;
+            isInTunnel = false;
+            //transform.Rotate(0, 0, isR && r == detectionDistance ? -90 : 90);
+        }
     }
 
-    float DetectAndDrawRay(Vector2 direction, int index)
+    private float GetSensorData(Vector2 direction)
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, detectionDistance, layerMask);
-        float distance = hit.collider != null ? hit.distance : detectionDistance;
+        return hit.collider != null ? hit.distance * Random.Range(0.98f, 1.02f) : detectionDistance;
+    }
 
-        // Set the positions for the LineRenderer
-        lineRenderer.SetPosition(index * 2, transform.position);
-        lineRenderer.SetPosition(index * 2 + 1, transform.position + (Vector3)direction * distance);
+    private float CalcRotation(float f, float r, float l)
+    {
+        if (f < frontDistance) return isR ? 1 : -1;
+        return r < tunnelDistance && l < tunnelDistance
+            ? rotateController.UpdateAngle(fps, r, (r + l) / 2)
+            : (isR ? 1 : -1) * rotateController.UpdateAngle(fps, isR ? r : l, sideDistance);
+    }
 
-        return distance;
+    private float CalcForward(float f)
+    {
+        return f < emergencyDistance ? 0f : Mathf.Clamp((f - emergencyDistance) / (detectionDistance - emergencyDistance), 0f, 1f);
     }
 }
