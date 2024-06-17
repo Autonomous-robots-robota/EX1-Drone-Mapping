@@ -1,6 +1,6 @@
 ![WhatsApp Image 2020-11-04 at 08 44 05](https://user-images.githubusercontent.com/57855070/98078036-f4b04180-1e79-11eb-9bde-48b3d32a201f.jpeg)
 # EX1-Drone-Mapping
-This project was done as part of the "Computer Game Development" course at Ariel University.
+This project was done as part of the "Autonomous-robots" course at Ariel University.
 
 You can see the assignment at the following link: 
 
@@ -42,13 +42,13 @@ Given a maximum speed, the speed range is set between 0 and the maximum speed.
 
 so that the current speed is <b> proportional </b> to the information received from the front sensor,
 
-When the forward distance is equal to the defined safety distance, the drone does not advance,
+When the forward distance is equal to the defined emergency distance, the drone doesn't move,
 
 When the forward distance is completely free, i.e. equal to the sensor range, the drone will move at maximum speed
 
 Proportion formula is defined like this-
 
-
+$\displaystyle \frac{forward\ distance\ -\ emergency\ distance}{sensor\ range\ -\ emergency\ distance}$
 
 The rotation of the drone is calculated as follows:
 
@@ -58,7 +58,8 @@ The drone is in one of two modes:
    
 When the drone approaches a front wall, that is, a short-range front sensor, the drone will turn against the current clinging direction.
 
-When the drone is in the tunnel meaning the side sensors are shorter than a given value - the drone will keep a distance from both sides by using <b> PID controller </b>
+When the drone is in the tunnel meaning the side sensors are shorter than a given value - 
+the drone will keep an equal distance from both sides by using <b> PID controller </b>
 
 otherwise the drone will keep a set distance from the wall on the side that matches its condition by using <b> PID controller </b>.
 
@@ -68,8 +69,6 @@ Switching between the modes takes place under the following conditions:
 The drone defines arrival at the intersection when it exits a tunnel and one of the side sensors is completely free - it is equal to the range of the sensor
 
 In addition the acceleration of the drone is limited by a value defined as required
-
-
 
 ## Physics of the Simulator
 
