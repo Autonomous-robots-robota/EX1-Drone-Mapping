@@ -48,7 +48,7 @@ public class PlayerRaycast : MonoBehaviour
                 UpdateSensors();
                 DrawLines();
             }
-            if(i % (10f * fps) == 0 && isInTunnel) { 
+            if(i % (5f * fps) == 0 && isInTunnel) { 
                 isR = !isR;
             }
         }
@@ -108,6 +108,7 @@ public class PlayerRaycast : MonoBehaviour
             isInTunnel = false;
             //transform.Rotate(0, 0, isR && r == detectionDistance ? -90 : 90);
         }
+        if (r < emergencyDistance && l < emergencyDistance && f < emergencyDistance) transform.Rotate(0, 0, 180);
     }
 
     private float GetSensorData(Vector2 direction)
